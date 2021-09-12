@@ -114,9 +114,10 @@ podPortName: grafana
 ## ref: http://kubernetes.io/docs/user-guide/services/
 ##
 service:
-  type: ClusterIP
+  type: NodePort
   port: 80
   targetPort: 3000
+  nodePort: 3000
     # targetPort: 4181 To be used with a proxy extraContainer
   annotations: {}
   labels: {}
@@ -204,10 +205,10 @@ extraContainerVolumes: []
 ##
 persistence:
   type: pvc
-  enabled: false
-  # storageClassName: default
+  enabled: true
+  storageClassName: csi-nas
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
   size: 10Gi
   # annotations: {}
   finalizers:

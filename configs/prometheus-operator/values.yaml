@@ -270,7 +270,7 @@ alertmanager:
     loadBalancerSourceRanges: []
     ## Service type
     ##
-    type: ClusterIP
+    type: NodePort
 
   ## Configuration for creating a separate Service for each statefulset Alertmanager replica
   ##
@@ -1417,7 +1417,7 @@ prometheus:
     loadBalancerSourceRanges: []
     ## Service type
     ##
-    type: ClusterIP
+    type: NodePort
 
     sessionAffinity: ""
 
@@ -1843,15 +1843,14 @@ prometheus:
     ## Prometheus StorageSpec for persistent data
     ## ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/user-guides/storage.md
     ##
-    storageSpec: {}
-    #  volumeClaimTemplate:
-    #    spec:
-    #      storageClassName: gluster
-    #      accessModes: ["ReadWriteOnce"]
-    #      resources:
-    #        requests:
-    #          storage: 50Gi
-    #    selector: {}
+    storageSpec:
+     volumeClaimTemplate:
+       spec:
+         storageClassName: csi-nas
+         accessModes: ["ReadWriteMany"]
+         resources:
+           requests:
+             storage: 20Gi
 
     # Additional volumes on the output StatefulSet definition.
     volumes: []
