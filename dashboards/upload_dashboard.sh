@@ -2,7 +2,7 @@
 
 [ $# -lt 3 ] && {
     echo
-    echo "$0 - Upload a Grafana dashboard back-up (JOSON file) to Grafana" 
+    echo "$0 - Upload a Grafana dashboard back-up (JSON file) to Grafana" 
     echo "Usage: $0 <grafana-API-key> <dashboard-file> <hostname-and-port>"
     echo
     exit 1
