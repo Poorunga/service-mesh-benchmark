@@ -20,8 +20,8 @@ spec:
         app: details
         version: v1
     spec:
-      nodeSelector:
-        role: workload
+      # nodeSelector:
+      #   role: workload
       securityContext:
         runAsNonRoot: true
         runAsUser: 65534

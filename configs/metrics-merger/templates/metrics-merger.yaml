@@ -17,8 +17,8 @@ spec:
       restartPolicy: Never
       securityContext:
         runAsUser: 10001
-      nodeSelector:
-        role: benchmark
+      # nodeSelector:
+      #   role: benchmark
       containers:
       - name: metrics-merger
         image: quay.io/kinvolk/svcmesh-bench-results-merger
