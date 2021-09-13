@@ -270,7 +270,7 @@ alertmanager:
     loadBalancerSourceRanges: []
     ## Service type
     ##
-    type: NodePort
+    type: ClusterIP
 
   ## Configuration for creating a separate Service for each statefulset Alertmanager replica
   ##
@@ -1417,7 +1417,7 @@ prometheus:
     loadBalancerSourceRanges: []
     ## Service type
     ##
-    type: NodePort
+    type: ClusterIP
 
     sessionAffinity: ""
 
