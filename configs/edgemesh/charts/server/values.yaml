@@ -1,0 +1,4 @@
+appImage: kubeedge/edgemesh-server:latest
+listenPort: 10004
+nodeName: "your node name"
+publicIP: "127.0.0.1"

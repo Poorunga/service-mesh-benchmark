@@ -1,0 +1,3 @@
+appImage: kubeedge/edgemesh-agent:latest
+subNet: "10.96.0.0/12"
+listenInterface: cni0
