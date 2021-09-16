@@ -1,6 +1,12 @@
 #!/bin/bash
 
 script_location="$(dirname "${BASH_SOURCE[0]}")"
+istio_profile=minimal
+
+# benchmark params
+app_count=3
+duration=120
+init_delay=10
 
 function grace() {
     grace=10
@@ -44,7 +50,7 @@ function install_emojivoto() {
 
     echo "Installing emojivoto."
 
-    for num in $(seq 0 1 59); do
+    for num in $(seq 0 1 $app_count); do
         {
             kubectl create namespace emojivoto-$num
 
@@ -62,9 +68,32 @@ function install_emojivoto() {
 }
 # --
 
+function install_emojivoto_for_edgemesh() {
+    echo "Installing emojivoto for edgemesh."
+
+    for num in $(seq 0 1 $app_count); do
+        {
+            kubectl create namespace emojivoto-$num
+
+            # Service ports must be named. The key/value pairs of port name
+            # must have the following syntax: name: <protocol>[-<suffix>]
+            # see https://github.com/kubeedge/edgemesh#getting-started
+            helm install emojivoto-$num --namespace emojivoto-$num \
+                    --set proto.grpc=tcp-0 --set proto.prom=tcp-1 \
+                    --set proto.http=http-0 \
+                    ${script_location}/../configs/emojivoto/
+         } &
+    done
+
+    wait
+
+    grace "kubectl get pods --all-namespaces | grep emojivoto | grep -v Running" 10
+}
+# --
+
 function restart_emojivoto_pods() {
 
-    for num in $(seq 0 1 59); do
+    for num in $(seq 0 1 $app_count); do
         local ns="emojivoto-$num"
         echo "Restarting pods in $ns"
         {  local pods="$(kubectl get -n "$ns" pods | grep -vE '^NAME' | awk '{print $1}')"
@@ -80,7 +109,7 @@ function restart_emojivoto_pods() {
 function delete_emojivoto() {
     echo "Deleting emojivoto."
 
-    for i in $(seq 0 1 59); do
+    for i in $(seq 0 1 $app_count); do
         { helm uninstall emojivoto-$i --namespace emojivoto-$i;
           kubectl delete namespace emojivoto-$i --wait; } &
     done
@@ -91,18 +120,9 @@ function delete_emojivoto() {
 }
 # --
 
-function run() {
-    echo "   Running '$@'"
-    $@
-}
-# --
-
 function install_benchmark() {
     local mesh="$1"
     local rps="$2"
-
-    local duration=600
-    local init_delay=10
 
     local app_count=$(kubectl get namespaces | grep emojivoto | wc -l)
 
@@ -168,105 +188,122 @@ function run_bench() {
 }
 # --
 
-function istio_extra_cleanup() {
-    # this is ugly but istio-system namespace gets stuck sometimes
-    kubectl get -n istio-system \
-            istiooperators.install.istio.io \
-            istiocontrolplane \
-            -o json \
-        | sed 's/"istio-finalizer.install.istio.io"//' \
-        | kubectl apply -f -
-
-    lokoctl component delete experimental-istio-operator \
-                                                --confirm --delete-namespace
-    kubectl delete --now --timeout=10s $(kubectl get clusterroles -o name | grep istio)
-    kubectl delete --now --timeout=10s $(kubectl get clusterrolebindings -o name | grep istio)
-    kubectl delete --now --timeout=10s  $(kubectl get crd -o name | grep istio)
-    kubectl delete --now --timeout=10s \
-            $(kubectl get validatingwebhookconfigurations -o name | grep istio)
-    kubectl delete --now --timeout=10s \
-            $(kubectl get mutatingwebhookconfigurations -o name | grep istio)
+function install_istio() {
+    echo "Installing istio"
+    istioctl install --set profile=$istio_profile -y
+    grace "kubectl get pods --all-namespaces | grep istio-system | grep -v Running"
 }
 # --
 
 function delete_istio() {
-    lokoctl component delete experimental-istio-operator --delete-namespace --confirm
-    [ $? -ne 0 ] && {
-        # this sometimes fails with a namespace error, works the 2nd time
-        sleep 5
-        lokoctl component delete experimental-istio-operator --delete-namespace --confirm; }
+    istioctl manifest generate --set profile=$istio_profile | kubectl delete --ignore-not-found=true -f -
+    kubectl delete namespace istio-system --now --timeout=30s
+    grace "kubectl get namespaces | grep istio-system" 1
+    sleep 30    # extra sleep to let istio initialise. Sidecar injection will
+                #  fail otherwise.
+}
+# --
 
-    grace "kubectl get namespaces | grep istio-operator" 1
-    kubectl delete namespace istio-system  --now --timeout=30s
-    for i in $(seq 20); do
-        istio_extra_cleanup
-        kubectl get namespaces | grep istio-system || break
-        sleep 1
+function install_edgemesh() {
+    echo "Installing edgemesh"
+    # some services add noproxy=edgemesh label
+    ${script_location}/../edgemesh-tools/bin/noproxy --namespaces kube-system,monitoring
+    # get schedule node, first value is node name, second value is node ip
+    schedule_node=$(${script_location}/../edgemesh-tools/bin/select)
+    array=(${schedule_node//,/ })
+    [ 2 -ne ${#array[@]} ] && echo "invalid schedule node, exit" && exit 1
+    node_name="${array[0]}"
+    node_ip="${array[1]}"
+    # install
+    kubectl create ns kubeedge
+    sleep 3
+    helm install edgemesh --namespace kubeedge \
+      --set server.nodeName=$node_name --set server.publicIP=$node_ip \
+      --set agent.subNet=10.247.0.0/16 --set agent.listenInterface=docker0 \
+      ${script_location}/../configs/edgemesh/
+    grace "kubectl get pods --all-namespaces | grep kubeedge | grep -v Running"
+}
+# --
+
+function delete_edgemesh() {
+    helm uninstall edgemesh --namespace kubeedge
+    kubectl delete ns kubeedge --wait
+    grace "kubectl get namespaces | grep kubeedge" 1
+    # remove services label
+    kubectl label service --all noproxy- -n kube-system
+    kubectl label service --all noproxy- -n monitoring
+}
+# --
+
+function run_bare_metal_bench() {
+    local rps="$1"
+
+    echo " +++ bare metal benchmark"
+    install_emojivoto bare-metal
+    run_bench bare-metal $rps
+    delete_emojivoto
+}
+# --
+
+function run_istio_bench() {
+    local rps="$1"
+
+    echo " +++ istio benchmark"
+    install_istio
+    install_emojivoto istio
+    while true; do
+        check_meshed "emojivoto-" && {
+            echo "  ++ Emojivoto is fully meshed."
+            break; }
+        echo " !!! Emojivoto is not fully meshed."
+        echo "     Deleting and re-deploying Istio."
+        delete_istio
+        install_istio
+        echo " !!!  Restarting all Emojivoto pods."
+        restart_emojivoto_pods
     done
+    run_bench istio $rps
+    delete_emojivoto
+
+    echo "Removing istio"
+    delete_istio
+}
+# --
+
+function run_edgemesh_bench() {
+    local rps="$1"
+
+    echo " +++ edgemesh benchmark"
+    install_edgemesh
+    install_emojivoto_for_edgemesh
+    run_bench edgemesh $rps
+    delete_emojivoto
+
+    echo "Removing edgemesh"
+    delete_edgemesh
 }
 # --
 
 function run_benchmarks() {
     for rps in 500 1000 1500 2000 2500 3000 3500 4000 4500 5000 5500; do
         for repeat in 1 2 3 4 5; do
-
             echo "########## Run #$repeat w/ $rps RPS"
-
-            echo " +++ bare metal benchmark"
-            install_emojivoto bare-metal
-            run_bench bare-metal $rps
-            delete_emojivoto
-
-            echo " +++ linkerd benchmark"
-            echo "Installing linkerd"
-            lokoctl component apply experimental-linkerd
-            [ $? -ne 0 ] && {
-                # this sometimes fails with a namespace error, works the 2nd time
-                sleep 5
-                lokoctl component apply experimental-linkerd; }
-
-            grace "kubectl get pods --all-namespaces | grep linkerd | grep -v Running"
-
-            install_emojivoto linkerd
-            run_bench linkerd $rps
-            delete_emojivoto
-
-            echo "Removing linkerd"
-            lokoctl component delete experimental-linkerd --delete-namespace --confirm
-            kubectl delete namespace linkerd --now --timeout=30s
-            grace "kubectl get namespaces | grep linkerd"
-
-            echo " +++ istio benchmark"
-            echo "Installing istio"
-            lokoctl component apply experimental-istio-operator
-            grace "kubectl get pods --all-namespaces | grep istio-operator | grep -v Running"
-            sleep 30    # extra sleep to let istio initialise. Sidecar injection will
-                        #  fail otherwise.
-
-            install_emojivoto istio
-            while true; do
-                check_meshed "emojivoto-" && {
-                    echo "  ++ Emojivoto is fully meshed."
-                    break; }
-                echo " !!! Emojivoto is not fully meshed."
-                echo "     Deleting and re-deploying Istio."
-                delete_istio
-                lokoctl component apply experimental-istio-operator
-                grace "kubectl get pods --all-namespaces | grep istio-operator | grep -v Running"
-                sleep 30
-                echo " !!!  Restarting all Emojivoto pods."
-                restart_emojivoto_pods
-            done
-            run_bench istio $rps
-            delete_emojivoto
-
-            echo "Removing istio"
-            delete_istio
+            run_bare_metal_bench $rps
+            run_istio_bench $rps
         done
     done
 }
 # --
 
-if [ "$(basename $0)" = "run_benchmarks.sh" ] ; then
-    run_benchmarks $@
-fi
+function run_benchmarks_test() {
+    for rps in 10 20; do
+        for repeat in 1 2 3 4 5; do
+            echo "########## Run #$repeat w/ $rps RPS"
+            run_bare_metal_bench $rps
+            run_istio_bench $rps
+        done
+    done
+}
+# --
+
+$@
