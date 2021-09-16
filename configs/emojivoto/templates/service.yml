@@ -7,10 +7,10 @@ metadata:
     app: emojivoto
 spec:
   ports:
-  - name: grpc
+  - name: {{ .Values.proto.grpc }}
     port: 8080
     targetPort: 8080
-  - name: prom
+  - name: {{ .Values.proto.prom }}
     port: 8801
     targetPort: 8801
   selector:
@@ -25,10 +25,10 @@ metadata:
     app: emojivoto
 spec:
   ports:
-  - name: grpc
+  - name: {{ .Values.proto.grpc }}
     port: 8080
     targetPort: 8080
-  - name: prom
+  - name: {{ .Values.proto.prom }}
     port: 8801
     targetPort: 8801
   selector:
@@ -43,7 +43,7 @@ metadata:
     app: emojivoto
 spec:
   ports:
-  - name: http
+  - name: {{ .Values.proto.http }}
     port: 80
     targetPort: 8080
   selector:
