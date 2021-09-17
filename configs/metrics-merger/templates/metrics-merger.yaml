@@ -21,7 +21,7 @@ spec:
       #   role: benchmark
       containers:
       - name: metrics-merger
-        image: quay.io/kinvolk/svcmesh-bench-results-merger
+        image: poorunga/svcmesh-bench-results-merger
         imagePullPolicy: Always
         env:
         - name: PROMETHEUS_URL
