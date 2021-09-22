@@ -31,13 +31,13 @@ spec:
         - containerPort: {{ .Values.listenPort }}
           name: relay
           protocol: TCP
-        resources:
-          limits:
-            cpu: 200m
-            memory: 1Gi
-          requests:
-            cpu: 100m
-            memory: 512Mi
+        # resources:
+        #   limits:
+        #     cpu: 200m
+        #     memory: 1Gi
+        #   requests:
+        #     cpu: 100m
+        #     memory: 512Mi
         volumeMounts:
           - name: conf
             mountPath: /etc/kubeedge/config
