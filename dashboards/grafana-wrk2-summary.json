@@ -42,7 +42,7 @@
     "links": [],
     "panels": [
       {
-        "content": "<h1><center>Benchmark latency summary</center></h1>\n<hr>\n<h3><center>Bare Metal, Linkerd, and Istio compared</center></h3>",
+        "content": "<h1><center>Benchmark latency summary</center></h1>\n<hr>\n<h3><center>Bare Metal, EdgeMesh, and Istio compared</center></h3>",
         "datasource": null,
         "gridPos": {
           "h": 3,
@@ -342,7 +342,7 @@
         "steppedLine": false,
         "targets": [
           {
-            "expr": "wrk2_benchmark_summary_latency_ms{requested_rps=\"$rps\",p=\"0.5\",exported_job=\"svcmesh-linkerd\",source_run!~\"$exclude_runs\"}",
+            "expr": "wrk2_benchmark_summary_latency_ms{requested_rps=\"$rps\",p=\"0.5\",exported_job=\"svcmesh-edgemesh\",source_run!~\"$exclude_runs\"}",
             "format": "time_series",
             "instant": false,
             "legendFormat": "Run {{source_run}}",
@@ -353,7 +353,7 @@
         "timeFrom": null,
         "timeRegions": [],
         "timeShift": null,
-        "title": "linkerd",
+        "title": "edgemesh",
         "tooltip": {
           "shared": true,
           "sort": 1,
@@ -624,7 +624,7 @@
         "steppedLine": false,
         "targets": [
           {
-            "expr": "wrk2_benchmark_summary_latency_ms{requested_rps=\"$rps\",p=\"0.75\",exported_job=\"svcmesh-linkerd\",source_run!~\"$exclude_runs\"}",
+            "expr": "wrk2_benchmark_summary_latency_ms{requested_rps=\"$rps\",p=\"0.75\",exported_job=\"svcmesh-edgemesh\",source_run!~\"$exclude_runs\"}",
             "format": "time_series",
             "instant": false,
             "legendFormat": "Run {{source_run}}",
@@ -635,7 +635,7 @@
         "timeFrom": null,
         "timeRegions": [],
         "timeShift": null,
-        "title": "linkerd",
+        "title": "edgemesh",
         "tooltip": {
           "shared": true,
           "sort": 1,
@@ -906,7 +906,7 @@
         "steppedLine": false,
         "targets": [
           {
-            "expr": "wrk2_benchmark_summary_latency_ms{requested_rps=\"$rps\",p=\"0.9\",exported_job=\"svcmesh-linkerd\",source_run!~\"$exclude_runs\"}",
+            "expr": "wrk2_benchmark_summary_latency_ms{requested_rps=\"$rps\",p=\"0.9\",exported_job=\"svcmesh-edgemesh\",source_run!~\"$exclude_runs\"}",
             "format": "time_series",
             "instant": false,
             "legendFormat": "Run {{source_run}}",
@@ -917,7 +917,7 @@
         "timeFrom": null,
         "timeRegions": [],
         "timeShift": null,
-        "title": "linkerd",
+        "title": "edgemesh",
         "tooltip": {
           "shared": true,
           "sort": 1,
@@ -1188,7 +1188,7 @@
         "steppedLine": false,
         "targets": [
           {
-            "expr": "wrk2_benchmark_summary_latency_ms{requested_rps=\"$rps\",p=\"0.99\",exported_job=\"svcmesh-linkerd\",source_run!~\"$exclude_runs\"}",
+            "expr": "wrk2_benchmark_summary_latency_ms{requested_rps=\"$rps\",p=\"0.99\",exported_job=\"svcmesh-edgemesh\",source_run!~\"$exclude_runs\"}",
             "format": "time_series",
             "instant": false,
             "legendFormat": "Run {{source_run}}",
@@ -1199,7 +1199,7 @@
         "timeFrom": null,
         "timeRegions": [],
         "timeShift": null,
-        "title": "linkerd",
+        "title": "edgemesh",
         "tooltip": {
           "shared": true,
           "sort": 1,
@@ -1470,7 +1470,7 @@
         "steppedLine": false,
         "targets": [
           {
-            "expr": "wrk2_benchmark_summary_latency_ms{requested_rps=\"$rps\",p=\"0.999\",exported_job=\"svcmesh-linkerd\",source_run!~\"$exclude_runs\"}",
+            "expr": "wrk2_benchmark_summary_latency_ms{requested_rps=\"$rps\",p=\"0.999\",exported_job=\"svcmesh-edgemesh\",source_run!~\"$exclude_runs\"}",
             "format": "time_series",
             "instant": false,
             "legendFormat": "Run {{source_run}}",
@@ -1481,7 +1481,7 @@
         "timeFrom": null,
         "timeRegions": [],
         "timeShift": null,
-        "title": "linkerd",
+        "title": "edgemesh",
         "tooltip": {
           "shared": true,
           "sort": 1,
@@ -1752,7 +1752,7 @@
         "steppedLine": false,
         "targets": [
           {
-            "expr": "wrk2_benchmark_summary_latency_ms{requested_rps=\"$rps\",p=\"0.9999\",exported_job=\"svcmesh-linkerd\",source_run!~\"$exclude_runs\"}",
+            "expr": "wrk2_benchmark_summary_latency_ms{requested_rps=\"$rps\",p=\"0.9999\",exported_job=\"svcmesh-edgemesh\",source_run!~\"$exclude_runs\"}",
             "format": "time_series",
             "instant": false,
             "legendFormat": "Run {{source_run}}",
@@ -1763,7 +1763,7 @@
         "timeFrom": null,
         "timeRegions": [],
         "timeShift": null,
-        "title": "linkerd",
+        "title": "edgemesh",
         "tooltip": {
           "shared": true,
           "sort": 1,
@@ -2034,7 +2034,7 @@
         "steppedLine": false,
         "targets": [
           {
-            "expr": "wrk2_benchmark_summary_latency_ms{requested_rps=\"$rps\",p=\"0.99999\",exported_job=\"svcmesh-linkerd\",source_run!~\"$exclude_runs\"}",
+            "expr": "wrk2_benchmark_summary_latency_ms{requested_rps=\"$rps\",p=\"0.99999\",exported_job=\"svcmesh-edgemesh\",source_run!~\"$exclude_runs\"}",
             "format": "time_series",
             "instant": false,
             "legendFormat": "Run {{source_run}}",
@@ -2045,7 +2045,7 @@
         "timeFrom": null,
         "timeRegions": [],
         "timeShift": null,
-        "title": "linkerd",
+        "title": "edgemesh",
         "tooltip": {
           "shared": true,
           "sort": 1,
@@ -2316,7 +2316,7 @@
         "steppedLine": false,
         "targets": [
           {
-            "expr": "wrk2_benchmark_summary_latency_ms{requested_rps=\"$rps\",p=\"1.0\",exported_job=\"svcmesh-linkerd\",source_run!~\"$exclude_runs\"}",
+            "expr": "wrk2_benchmark_summary_latency_ms{requested_rps=\"$rps\",p=\"1.0\",exported_job=\"svcmesh-edgemesh\",source_run!~\"$exclude_runs\"}",
             "format": "time_series",
             "instant": false,
             "legendFormat": "Run {{source_run}}",
@@ -2327,7 +2327,7 @@
         "timeFrom": null,
         "timeRegions": [],
         "timeShift": null,
-        "title": "linkerd",
+        "title": "edgemesh",
         "tooltip": {
           "shared": true,
           "sort": 1,
@@ -3250,7 +3250,7 @@
         },
         "styles": [
           {
-            "alias": "benchmark run (click to open in cockpit)",
+            "alias": "benchmark run",
             "colorMode": null,
             "colors": [
               "rgba(245, 54, 54, 0.9)",
@@ -3324,7 +3324,7 @@
         "type": "table"
       },
       {
-        "content": "<hr>\n<h3><center>Linkerd latency percentiles</center>",
+        "content": "<hr>\n<h3><center>EdgeMesh latency percentiles</center>",
         "datasource": null,
         "gridPos": {
           "h": 2,
@@ -3386,7 +3386,7 @@
         "steppedLine": false,
         "targets": [
           {
-            "expr": "wrk2_benchmark_summary_latency_ms{requested_rps=\"$rps\",p=\"0.5\",exported_job=\"svcmesh-linkerd\",source_run!~\"$exclude_runs\"}",
+            "expr": "wrk2_benchmark_summary_latency_ms{requested_rps=\"$rps\",p=\"0.5\",exported_job=\"svcmesh-edgemesh\",source_run!~\"$exclude_runs\"}",
             "format": "time_series",
             "instant": false,
             "legendFormat": "Run {{source_run}}",
@@ -3480,7 +3480,7 @@
         "steppedLine": false,
         "targets": [
           {
-            "expr": "wrk2_benchmark_summary_latency_ms{requested_rps=\"$rps\",p=\"0.75\",exported_job=\"svcmesh-linkerd\",source_run!~\"$exclude_runs\"}",
+            "expr": "wrk2_benchmark_summary_latency_ms{requested_rps=\"$rps\",p=\"0.75\",exported_job=\"svcmesh-edgemesh\",source_run!~\"$exclude_runs\"}",
             "format": "time_series",
             "instant": false,
             "legendFormat": "Run {{source_run}}",
@@ -3574,7 +3574,7 @@
         "steppedLine": false,
         "targets": [
           {
-            "expr": "wrk2_benchmark_summary_latency_ms{requested_rps=\"$rps\",p=\"0.9\",exported_job=\"svcmesh-linkerd\",source_run!~\"$exclude_runs\"}",
+            "expr": "wrk2_benchmark_summary_latency_ms{requested_rps=\"$rps\",p=\"0.9\",exported_job=\"svcmesh-edgemesh\",source_run!~\"$exclude_runs\"}",
             "format": "time_series",
             "instant": false,
             "legendFormat": "Run {{source_run}}",
@@ -3668,7 +3668,7 @@
         "steppedLine": false,
         "targets": [
           {
-            "expr": "wrk2_benchmark_summary_latency_ms{requested_rps=\"$rps\",p=\"0.99\",exported_job=\"svcmesh-linkerd\",source_run!~\"$exclude_runs\"}",
+            "expr": "wrk2_benchmark_summary_latency_ms{requested_rps=\"$rps\",p=\"0.99\",exported_job=\"svcmesh-edgemesh\",source_run!~\"$exclude_runs\"}",
             "format": "time_series",
             "instant": false,
             "legendFormat": "Run {{source_run}}",
@@ -3762,7 +3762,7 @@
         "steppedLine": false,
         "targets": [
           {
-            "expr": "wrk2_benchmark_summary_latency_ms{requested_rps=\"$rps\",p=\"0.999\",exported_job=\"svcmesh-linkerd\",source_run!~\"$exclude_runs\"}",
+            "expr": "wrk2_benchmark_summary_latency_ms{requested_rps=\"$rps\",p=\"0.999\",exported_job=\"svcmesh-edgemesh\",source_run!~\"$exclude_runs\"}",
             "format": "time_series",
             "instant": false,
             "legendFormat": "Run {{source_run}}",
@@ -3856,7 +3856,7 @@
         "steppedLine": false,
         "targets": [
           {
-            "expr": "wrk2_benchmark_summary_latency_ms{requested_rps=\"$rps\",p=\"0.9999\",exported_job=\"svcmesh-linkerd\",source_run!~\"$exclude_runs\"}",
+            "expr": "wrk2_benchmark_summary_latency_ms{requested_rps=\"$rps\",p=\"0.9999\",exported_job=\"svcmesh-edgemesh\",source_run!~\"$exclude_runs\"}",
             "format": "time_series",
             "instant": false,
             "legendFormat": "Run {{source_run}}",
@@ -3950,7 +3950,7 @@
         "steppedLine": false,
         "targets": [
           {
-            "expr": "wrk2_benchmark_summary_latency_ms{requested_rps=\"$rps\",p=\"0.99999\",exported_job=\"svcmesh-linkerd\",source_run!~\"$exclude_runs\"}",
+            "expr": "wrk2_benchmark_summary_latency_ms{requested_rps=\"$rps\",p=\"0.99999\",exported_job=\"svcmesh-edgemesh\",source_run!~\"$exclude_runs\"}",
             "format": "time_series",
             "instant": false,
             "legendFormat": "Run {{source_run}}",
@@ -4044,7 +4044,7 @@
         "steppedLine": false,
         "targets": [
           {
-            "expr": "wrk2_benchmark_summary_latency_ms{requested_rps=\"$rps\",p=\"1.0\",exported_job=\"svcmesh-linkerd\",source_run!~\"$exclude_runs\"}",
+            "expr": "wrk2_benchmark_summary_latency_ms{requested_rps=\"$rps\",p=\"1.0\",exported_job=\"svcmesh-edgemesh\",source_run!~\"$exclude_runs\"}",
             "format": "time_series",
             "instant": false,
             "legendFormat": "Run {{source_run}}",
@@ -4113,7 +4113,7 @@
         },
         "styles": [
           {
-            "alias": "benchmark run (click to open in cockpit)",
+            "alias": "benchmark run",
             "colorMode": null,
             "colors": [
               "rgba(245, 54, 54, 0.9)",
@@ -4125,7 +4125,7 @@
             "link": true,
             "linkTargetBlank": true,
             "linkTooltip": "Go to run ${__cell_3}.",
-            "linkUrl": "/dashboard/db/wrk2-benchmark-cockpit?var-job=svcmesh-linkerd&var-instance=${__cell_2}&var-run=${__cell_3}&from=${__cell_4}&to=${__cell_1}",
+            "linkUrl": "/dashboard/db/wrk2-benchmark-cockpit?var-job=svcmesh-edgemesh&var-instance=${__cell_2}&var-run=${__cell_3}&from=${__cell_4}&to=${__cell_1}",
             "mappingType": 1,
             "pattern": "source_run",
             "thresholds": [],
@@ -4171,7 +4171,7 @@
         ],
         "targets": [
           {
-            "expr": "max(wrk2_benchmark_summary_latency_ms{exported_job=\"svcmesh-linkerd\",requested_rps=\"$rps\", p=\"1.0\",source_run!~\"$exclude_runs\"}) by (exported_instance,start,end,source_run,value)",
+            "expr": "max(wrk2_benchmark_summary_latency_ms{exported_job=\"svcmesh-edgemesh\",requested_rps=\"$rps\", p=\"1.0\",source_run!~\"$exclude_runs\"}) by (exported_instance,start,end,source_run,value)",
             "format": "table",
             "hide": false,
             "instant": true,
@@ -4976,7 +4976,7 @@
         },
         "styles": [
           {
-            "alias": "benchmark run (click to open in cockpit)",
+            "alias": "benchmark run",
             "colorMode": null,
             "colors": [
               "rgba(245, 54, 54, 0.9)",

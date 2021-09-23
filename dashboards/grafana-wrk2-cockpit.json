@@ -1000,8 +1000,15 @@
         "steppedLine": false,
         "targets": [
           {
-            "expr": "container_memory_working_set_bytes{container!~\"POD\", namespace=~\"benchmark-.*\", container=~\".*-proxy\",container!=\"\"}",
-            "legendFormat": "{{container}} Memory",
+            "expr": "sum(container_memory_working_set_bytes{container!~\"POD\", container=~\"edgemesh-agent\",container!=\"\"})",
+            "interval": "",
+            "legendFormat": "edgemesh-agent Memory",
+            "refId": "A"
+          },
+          {
+            "expr": "sum(container_memory_working_set_bytes{container!~\"POD\", container=~\"istio-proxy\",container!=\"\"})",
+            "interval": "",
+            "legendFormat": "istio-proxy Memory",
             "refId": "B"
           }
         ],
@@ -1093,7 +1100,14 @@
         "steppedLine": false,
         "targets": [
           {
-            "expr": "max(container_memory_working_set_bytes{container!~\"POD\", namespace=~\"$instance.*\", container=~\"(linkerd|istio)-proxy\",container!=\"\"})  by (container)",
+            "expr": "max(container_memory_working_set_bytes{container!~\"POD\", container=\"edgemesh-agent\", container!=\"\"}) by (container)",
+            "interval": "",
+            "legendFormat": "{{container}} Memory",
+            "refId": "A"
+          },
+          {
+            "expr": "max(container_memory_working_set_bytes{container!~\"POD\", namespace=~\"$instance.*\", container=\"istio-proxy\", container!=\"\"}) by (container)",
+            "interval": "",
             "legendFormat": "{{container}} Memory",
             "refId": "B"
           }
@@ -1186,13 +1200,15 @@
         "steppedLine": false,
         "targets": [
           {
-            "expr": "sum(container_memory_working_set_bytes{container!~\"POD\", namespace=~\"linkerd\", container!~\".*-proxy\",container!=\"\"})",
-            "legendFormat": "Linkerd total Memory",
+            "expr": "sum(container_memory_working_set_bytes{container!~\"POD\", container=\"edgemesh-server\", container!=\"\"})",
+            "interval": "",
+            "legendFormat": "edgemesh-server Memory",
             "refId": "E"
           },
           {
-            "expr": "sum(container_memory_working_set_bytes{container!~\"POD\", namespace=~\"(istio-.*)\", container!~\".*-proxy\",container!=\"\"})",
-            "legendFormat": "Istio total Memory",
+            "expr": "sum(container_memory_working_set_bytes{container!~\"POD\", namespace=~\"(istio-.*)\", container!~\".*-proxy\", container!=\"\"})",
+            "interval": "",
+            "legendFormat": "istiod Memory",
             "refId": "F"
           }
         ],
@@ -1297,18 +1313,25 @@
         "steppedLine": false,
         "targets": [
           {
-            "expr": "node_namespace_pod_container:container_cpu_usage_seconds_total:sum_rate{namespace=~\"benchmark-.*\", container=~\".*-proxy\",container!=\"\"}",
+            "expr": "sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_rate{container=\"edgemesh-agent\",container!=\"\"})",
+            "interval": "",
+            "legendFormat": "edgemesh-agent CPU seconds",
+            "refId": "A"
+          },
+          {
+            "expr": "sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_rate{container=\"istio-proxy\",container!=\"\"})",
             "format": "time_series",
             "instant": false,
-            "legendFormat": "{{container}} CPU seconds",
-            "refId": "A"
+            "interval": "",
+            "legendFormat": "istio-proxy CPU seconds",
+            "refId": "B"
           }
         ],
         "thresholds": [],
         "timeFrom": null,
         "timeRegions": [],
         "timeShift": null,
-        "title": "Sidecar CPU usage - Load generator ",
+        "title": "Sidecar CPU usage - Load generator",
         "tooltip": {
           "shared": true,
           "sort": 0,
@@ -1392,11 +1415,18 @@
         "steppedLine": false,
         "targets": [
           {
-            "expr": "max(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_rate{namespace=~\"$instance.*\", container=~\"(linkerd|istio)-proxy\",container!=\"\"}) by (container)",
+            "expr": "max(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_rate{container=\"edgemesh-agent\", container!=\"\"}) by (container)",
+            "interval": "",
+            "legendFormat": "edgemesh-agent CPU seconds",
+            "refId": "A"
+          },
+          {
+            "expr": "max(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_rate{namespace=~\"$instance.*\", container=\"istio-proxy\", container!=\"\"}) by (container)",
             "format": "time_series",
             "instant": false,
-            "legendFormat": "{{container}} CPU seconds",
-            "refId": "A"
+            "interval": "",
+            "legendFormat": "istio-proxy CPU seconds",
+            "refId": "B"
           }
         ],
         "thresholds": [],
@@ -1504,13 +1534,15 @@
         "steppedLine": false,
         "targets": [
           {
-            "expr": "sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_rate{namespace=~\"linkerd\", container!~\".*-proxy\",container!=\"\"})",
-            "legendFormat": "Linkerd total CPU seconds",
+            "expr": "sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_rate{container=\"edgemesh-server\", container!=\"\"})",
+            "interval": "",
+            "legendFormat": "edgemesh-server CPU seconds",
             "refId": "C"
           },
           {
-            "expr": "sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_rate{namespace=~\"istio-.*\", container!~\".*-proxy\",container!=\"\"})",
-            "legendFormat": "Istio total CPU seconds",
+            "expr": "sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_rate{namespace=~\"istio-.*\", container!~\".*-proxy\", container!=\"\"})",
+            "interval": "",
+            "legendFormat": "istiod CPU seconds",
             "refId": "D"
           }
         ],
