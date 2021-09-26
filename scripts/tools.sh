@@ -1,7 +1,10 @@
 #!/bin/bash
 
 script_location="$(dirname "${BASH_SOURCE[0]}")"
+
+# svcMesh params
 istio_profile=minimal
+service_cidr=10.247.0.0/16 # edit your cluster service ip cidr here
 
 # benchmark params
 app_count=59
@@ -236,25 +239,60 @@ function delete_istio() {
     kubectl delete namespace istio-system --now --timeout=30s
     grace "kubectl get namespaces | grep istio-system" 1
     sleep 30    # extra sleep to let istio initialise. Sidecar injection will
-                #  fail otherwise.
+                # fail otherwise.
+}
+# --
+
+function label_services() {
+    for var in $@; do
+        ns=$(kubectl get ns | grep $var | awk '{print $1}')
+        if [ -z "$ns" ]; then
+            echo "no namespace $var"
+            continue
+        fi
+        # only label non-headless services
+        for svc in $(kubectl get services -n $ns | grep -vE CLUSTER-IP | grep -vE None | awk '{print $1}'); do
+            kubectl label service $svc noproxy=edgemesh -n $ns
+        done
+    done
+}
+# --
+
+function unlabel_services() {
+    for var in $@; do
+        ns=$(kubectl get ns | grep $var | awk '{print $1}')
+        if [ -z "$ns" ]; then
+            echo "no namespace $var"
+            continue
+        fi
+        # only label non-headless services
+        for svc in $(kubectl get services -n $ns | grep -vE CLUSTER-IP | grep -vE None | awk '{print $1}'); do
+            kubectl label service $svc noproxy- -n $ns
+        done
+    done
 }
 # --
 
 function install_edgemesh() {
     echo "Installing edgemesh"
     # some services add noproxy=edgemesh label
-    ${script_location}/../edgemesh-tools/bin/noproxy --namespaces kube-system,monitoring
-    # get schedule node, first value is node name, second value is node ip
-    schedule_node=$(${script_location}/../edgemesh-tools/bin/select)
-    array=(${schedule_node//,/ })
-    [ 2 -ne ${#array[@]} ] && echo "invalid schedule node, exit" && exit 1
-    node_name="${array[0]}"
-    node_ip="${array[1]}"
-    # install
+    label_services kube-system monitoring
+    # get the scheduled node of edgemesh-server
+    nodes=()
+    for node in $(kubectl get nodes | grep "Ready" | awk '{print $1}'); do
+        nodes[${#nodes[*]}]=$node
+    done
+    [ 0 -eq ${#nodes[*]} ] && \
+        echo -e "Cluster has no working nodes" && \
+        exit 1
+    index=$[$RANDOM%${#nodes[*]}]
+    node_name=${nodes[index]}
+    node_ip=$(kubectl describe node $node_name | grep InternalIP | awk '{print $2}')
+    # install edgemesh
     kubectl create ns kubeedge
     helm install edgemesh --namespace kubeedge \
       --set server.nodeName=$node_name --set server.publicIP=$node_ip \
-      --set agent.subNet=10.247.0.0/16 --set agent.listenInterface=docker0 \
+      --set agent.subNet=$service_cidr --set agent.listenInterface=docker0 \
       ${script_location}/../configs/edgemesh/
     grace "kubectl get pods --all-namespaces | grep kubeedge | grep -v Running"
 }
@@ -264,9 +302,7 @@ function delete_edgemesh() {
     helm uninstall edgemesh --namespace kubeedge
     kubectl delete ns kubeedge --wait
     grace "kubectl get namespaces | grep kubeedge" 1
-    # remove services label
-    kubectl label service --all noproxy- -n kube-system
-    kubectl label service --all noproxy- -n monitoring
+    unlabel_services kube-system monitoring
 }
 # --
 
