@@ -378,7 +378,7 @@ function run_edgemesh_bench() {
 
 function run_benchmarks() {
     for rps in 20 100 500 2500; do
-        for repeat in 1 2 3 4 5; do
+        for repeat in 1 2 3 4 5 6; do
             echo "########## Run #$repeat w/ $rps RPS"
             run_bare_metal_bench $rps
             run_edgemesh_bench $rps
