@@ -1,11 +1,11 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: {{ .Release.Name }}-server
+  namespace: kubeedge
   labels:
     k8s-app: kubeedge
     kubeedge: edgemesh-server
-  name: {{ .Release.Name }}-server
-  namespace: {{ .Release.Namespace }}
 spec:
   selector:
     matchLabels:
@@ -21,23 +21,23 @@ spec:
       nodeName: {{ .Values.nodeName }}
       containers:
       - name: {{ .Release.Name }}-server
-        image: {{ .Values.appImage }}
+        image: {{ .Values.image }}
         env:
           - name: MY_NODE_NAME
             valueFrom:
               fieldRef:
                 fieldPath: spec.nodeName
         ports:
-        - containerPort: {{ .Values.listenPort }}
+        - containerPort: {{ .Values.modules.tunnel.listenPort }}
           name: relay
           protocol: TCP
-        # resources:
-        #   limits:
-        #     cpu: 200m
-        #     memory: 1Gi
-        #   requests:
-        #     cpu: 100m
-        #     memory: 512Mi
+        resources:
+          limits:
+            cpu: 1
+            memory: 1Gi
+          requests:
+            cpu: 0.5
+            memory: 512Mi
         volumeMounts:
           - name: conf
             mountPath: /etc/kubeedge/config

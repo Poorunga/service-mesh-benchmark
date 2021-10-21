@@ -3,8 +3,8 @@
 script_location="$(dirname "${BASH_SOURCE[0]}")"
 
 # svcMesh params
+istio_version=1.11.2
 istio_profile=minimal
-service_cidr=10.247.0.0/16 # edit your cluster service ip cidr here
 
 # benchmark params
 app_count=59
@@ -35,7 +35,6 @@ function init_bench_env() {
     mv /tmp/linux-amd64/helm /usr/local/bin/
 
     echo "Installing istioctl"
-    istio_version=1.11.2
     curl -L https://istio.io/downloadIstio | ISTIO_VERSION=$istio_version TARGET_ARCH=x86_64 sh -
     cp istio-$istio_version/bin/istioctl /usr/local/bin/
     rm -rf istio-$istio_version
@@ -292,7 +291,6 @@ function install_edgemesh() {
     kubectl create ns kubeedge
     helm install edgemesh --namespace kubeedge \
       --set server.nodeName=$node_name --set server.publicIP=$node_ip \
-      --set agent.subNet=$service_cidr --set agent.listenInterface=docker0 \
       ${script_location}/../configs/edgemesh/
     grace "kubectl get pods --all-namespaces | grep kubeedge | grep -v Running"
 }

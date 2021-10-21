@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: {{ .Release.Name }}-agent
-  namespace: {{ .Release.Namespace }}
+  namespace: kubeedge
   labels:
     k8s-app: kubeedge
     kubeedge: edgemesh-agent
@@ -17,33 +17,24 @@ spec:
         k8s-app: kubeedge
         kubeedge: edgemesh-agent
     spec:
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-              - matchExpressions:
-                  - key: node-role.kubernetes.io/edge
-                    operator: DoesNotExist
-                  - key: node-role.kubernetes.io/agent
-                    operator: DoesNotExist
       hostNetwork: true
       containers:
         - name: {{ .Release.Name }}-agent
           securityContext:
             privileged: true
-          image: {{ .Values.appImage }}
+          image: {{ .Values.image }}
           env:
             - name: MY_NODE_NAME
               valueFrom:
                 fieldRef:
                   fieldPath: spec.nodeName
-          # resources:
-          #   limits:
-          #     cpu: 200m
-          #     memory: 256Mi
-          #   requests:
-          #     cpu: 100m
-          #     memory: 128Mi
+          resources:
+            limits:
+              cpu: 1
+              memory: 256Mi
+            requests:
+              cpu: 0.5
+              memory: 128Mi
           volumeMounts:
             - name: conf
               mountPath: /etc/kubeedge/config
