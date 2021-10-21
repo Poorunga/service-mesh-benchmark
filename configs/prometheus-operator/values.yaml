@@ -1843,14 +1843,15 @@ prometheus:
     ## Prometheus StorageSpec for persistent data
     ## ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/user-guides/storage.md
     ##
-    storageSpec:
-     volumeClaimTemplate:
-       spec:
-         storageClassName: csi-nas
-         accessModes: ["ReadWriteMany"]
-         resources:
-           requests:
-             storage: 20Gi
+    storageSpec: {}
+    #  volumeClaimTemplate:
+    #    spec:
+    #      storageClassName: gluster
+    #      accessModes: ["ReadWriteOnce"]
+    #      resources:
+    #        requests:
+    #          storage: 50Gi
+    #    selector: {}
 
     # Additional volumes on the output StatefulSet definition.
     volumes: []

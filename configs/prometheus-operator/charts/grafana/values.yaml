@@ -205,7 +205,7 @@ extraContainerVolumes: []
 ##
 persistence:
   type: pvc
-  enabled: true
+  enabled: false
   storageClassName: csi-nas
   accessModes:
     - ReadWriteMany
